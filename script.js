@@ -21,9 +21,9 @@ const ui = {
 };
 
 const difficultySettings = {
-    easy: { duration: 75, targetScale: 1.22, speed: 0, targetCount: 5, spawnEvery: 1.1, label: 'Chai lớn, đứng yên · 75 giây' },
-    normal: { duration: 60, targetScale: 1, speed: 0.06, targetCount: 6, spawnEvery: 0.9, label: 'Mục tiêu di chuyển · 60 giây' },
-    hard: { duration: 45, targetScale: 0.78, speed: 0.12, targetCount: 7, spawnEvery: 0.7, label: 'Mục tiêu nhỏ, nhanh · 45 giây' }
+    easy: { targetScale: 1.22, speed: 0, targetCount: 5, spawnEvery: 1.1, label: 'Chai lớn, đứng yên' },
+    normal: { targetScale: 1, speed: 0.06, targetCount: 6, spawnEvery: 0.9, label: 'Mục tiêu di chuyển' },
+    hard: { targetScale: 0.78, speed: 0.12, targetCount: 7, spawnEvery: 0.7, label: 'Mục tiêu nhỏ, nhanh' }
 };
 
 const targetTypes = [
@@ -37,7 +37,7 @@ const targetTypes = [
 
 const state = {
     screen: 'menu', difficulty: 'easy', score: 0, combo: 1, bestCombo: 1,
-    shots: 0, hits: 0, ammo: 10, maxAmmo: 10, timeLeft: 75,
+    shots: 0, hits: 0, ammo: 10, maxAmmo: 10, elapsedTime: 0,
     targets: [], particles: [], aim: { x: 0.5, y: 0.55 },
     lastFrame: 0, spawnTimer: 0, reloadTimer: 0, reloading: false,
     soundEnabled: true, quality: 'high', audio: null, width: 0, height: 0, pixelRatio: 1,
@@ -113,7 +113,7 @@ function startGame() {
     state.shots = 0;
     state.hits = 0;
     state.ammo = state.maxAmmo;
-    state.timeLeft = settings.duration;
+    state.elapsedTime = 0;
     state.spawnTimer = 0;
     state.reloadTimer = 0;
     state.reloading = false;
@@ -130,9 +130,10 @@ function startGame() {
 }
 
 function finishGame() {
-    if (state.screen !== 'playing') return;
+    if (state.screen !== 'playing' && state.screen !== 'paused') return;
     state.screen = 'gameover';
     state.reloading = false;
+    ui.pause.classList.add('hidden');
     saveRecord();
     document.querySelector('#finalScore').textContent = formatScore(state.score);
     document.querySelector('#finalAccuracy').textContent = `${state.shots ? Math.round(state.hits / state.shots * 100) : 0}%`;
@@ -144,8 +145,11 @@ function finishGame() {
 function updateHud() {
     ui.score.textContent = formatScore(state.score);
     ui.combo.textContent = `LIÊN TIẾP ×${state.combo}`;
-    ui.time.textContent = String(Math.ceil(state.timeLeft)).padStart(2, '0');
-    ui.timeBar.style.transform = `scaleX(${Math.max(0, state.timeLeft / difficultySettings[state.difficulty].duration)})`;
+    const elapsedSeconds = Math.floor(state.elapsedTime);
+    const minutes = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+    const seconds = String(elapsedSeconds % 60).padStart(2, '0');
+    ui.time.textContent = `${minutes}:${seconds}`;
+    ui.timeBar.style.transform = 'scaleX(1)';
     ui.ammo.innerHTML = `${state.ammo} <small>/ ${state.maxAmmo}</small>`;
     ui.ammoPips.innerHTML = Array.from({ length: state.maxAmmo }, (_, index) => `<i class="${index >= state.ammo ? 'empty' : ''}"></i>`).join('');
     ui.reload.disabled = state.screen !== 'playing' || state.reloading || state.ammo === state.maxAmmo;
@@ -514,12 +518,7 @@ function drawWeapon(width, height) {
 function update(delta) {
     state.flashTimer = Math.max(0, state.flashTimer - delta);
     if (state.screen === 'playing') {
-        state.timeLeft -= delta;
-        if (state.timeLeft <= 0) {
-            state.timeLeft = 0;
-            updateHud();
-            finishGame();
-        }
+        state.elapsedTime += delta;
         const settings = difficultySettings[state.difficulty];
         state.spawnTimer += delta;
         if (state.targets.length < settings.targetCount && state.spawnTimer >= settings.spawnEvery) {
@@ -625,7 +624,7 @@ function openDialog(type) {
     if (type === 'how') {
         eyebrow.textContent = 'HƯỚNG DẪN';
         title.innerHTML = 'Cách<br><em>chơi.</em>';
-        content.innerHTML = '<p><strong>01 / NGẮM</strong> Di chuyển chuột hoặc kéo ngón tay trên màn hình để ngắm mục tiêu.</p><p><strong>02 / BẮN</strong> Nhấp vào khu vực chơi hoặc nhấn nút BẮN. Bắn trúng chính giữa mục tiêu sẽ được thưởng thêm điểm.</p><p><strong>03 / GIỮ CHUỖI</strong> Mỗi lần bắn trúng sẽ kéo dài chuỗi liên tiếp. Bắn trượt làm chuỗi trở về ×1. Nhấn R hoặc NẠP ĐẠN khi hết đạn.</p><p><strong>ESC</strong> để tạm dừng. Hãy bắn hạ thật nhiều mục tiêu trước khi hết giờ.</p>';
+        content.innerHTML = '<p><strong>01 / NGẮM</strong> Trên điện thoại, kéo ngón tay để di chuyển tâm ngắm. Chạm vào màn hình để ngắm và bắn ngay.</p><p><strong>02 / BẮN</strong> Trên máy tính, di chuyển chuột để ngắm rồi nhấp để bắn. Bắn trúng chính giữa mục tiêu sẽ được thưởng thêm điểm.</p><p><strong>03 / GIỮ CHUỖI</strong> Mỗi lần bắn trúng sẽ kéo dài chuỗi liên tiếp. Bắn trượt làm chuỗi trở về ×1. Nhấn R hoặc NẠP ĐẠN khi hết đạn.</p><p><strong>ESC</strong> để tạm dừng. Hãy bắn hạ thật nhiều mục tiêu trước khi kết thúc lượt.</p>';
     } else if (type === 'settings') {
         eyebrow.textContent = 'TÙY CHỈNH TRƯỜNG BẮN';
         title.innerHTML = 'Tùy chỉnh<br><em>cài đặt.</em>';
@@ -651,6 +650,7 @@ function openDialog(type) {
 document.querySelector('#startButton').addEventListener('click', startGame);
 document.querySelector('#playAgainButton').addEventListener('click', startGame);
 document.querySelector('#pauseRestartButton').addEventListener('click', startGame);
+document.querySelector('#endSessionButton').addEventListener('click', finishGame);
 document.querySelector('#resumeButton').addEventListener('click', () => {
     state.screen = 'playing';
     ui.pause.classList.add('hidden');
@@ -672,15 +672,16 @@ document.querySelectorAll('[data-difficulty]').forEach((button) => {
         document.querySelectorAll('[data-difficulty]').forEach((option) => option.classList.toggle('active', option === button));
         state.difficulty = button.dataset.difficulty;
         document.querySelector('#difficultyNote').textContent = difficultySettings[state.difficulty].label;
-        if (state.screen === 'menu') state.timeLeft = difficultySettings[state.difficulty].duration;
         updateHud();
     });
 });
 
 canvas.addEventListener('pointermove', (event) => {
+    if (event.pointerType !== 'mouse') return;
+
     const bounds = canvas.getBoundingClientRect();
-    const sensitivity = Number(canvas.dataset[ event.pointerType === 'mouse' ? 'mouseSensitivity' : 'touchSensitivity' ] || 1);
-    if (!state.lastPointer || state.lastPointer.type !== event.pointerType) {
+    const sensitivity = Number(canvas.dataset.mouseSensitivity || 1);
+    if (!state.lastPointer || state.lastPointer.type !== 'mouse') {
         setAim(event.clientX, event.clientY);
     } else {
         state.aim.x += (event.clientX - state.lastPointer.x) / bounds.width * sensitivity;
@@ -690,13 +691,14 @@ canvas.addEventListener('pointermove', (event) => {
         crosshair.style.left = `${state.aim.x * 100}%`;
         crosshair.style.top = `${state.aim.y * 100}%`;
     }
-    state.lastPointer = { x: event.clientX, y: event.clientY, type: event.pointerType };
+    state.lastPointer = { x: event.clientX, y: event.clientY, type: 'mouse' };
 });
 canvas.addEventListener('pointerdown', (event) => {
     state.lastPointer = { x: event.clientX, y: event.clientY, type: event.pointerType };
     if (event.pointerType === 'touch') {
         canvas.setPointerCapture(event.pointerId);
         setAim(event.clientX, event.clientY);
+        fire();
     } else if (event.button === 0) {
         setAim(event.clientX, event.clientY);
         fire();
