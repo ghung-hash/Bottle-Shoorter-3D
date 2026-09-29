@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#dce9e5">
+    <title>Bắn Chai 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <main class="app-shell">
+        <header class="topbar">
+            <a class="wordmark" href="#" aria-label="Trang chủ Bắn Chai 3D">
+                <span class="brand-mark" aria-hidden="true">B</span>
+                <span>BẮN CHAI<span class="wordmark-light"> / 3D</span></span>
+            </a>
+            <div class="topbar-right">
+                <span class="session-label"><span class="status-dot"></span> TRƯỜNG BẮN NGOÀI TRỜI · 01</span>
+                <button class="icon-button" id="soundToggle" type="button" aria-label="Bật hoặc tắt âm thanh" title="Bật hoặc tắt âm thanh">
+                    <svg class="sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Zm12.5-2.5a6 6 0 0 1 0 9m2.5-11.5a9.5 9.5 0 0 1 0 14"/></svg>
+                    <svg class="sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Zm12 1 5 5m0-5-5 5"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <section class="game-layout" aria-label="Trò chơi Bắn Chai 3D">
+            <aside class="side-rail">
+                <div class="rail-heading"><span>CHẾ ĐỘ LUYỆN TẬP</span><span class="rail-number">01 — 03</span></div>
+                <h1>Ngắm chuẩn,<br><em>bắn thật trúng.</em></h1>
+                <p class="intro-copy">Giữ tay ngắm vững vàng và bắn hạ thật nhiều mục tiêu trước khi hết giờ.</p>
+
+                <div class="difficulty-block">
+                    <div class="section-label">ĐỘ KHÓ</div>
+                    <div class="difficulty-control" role="group" aria-label="Chọn độ khó">
+                        <button class="difficulty-option active" type="button" data-difficulty="easy">Dễ</button>
+                        <button class="difficulty-option" type="button" data-difficulty="normal">Vừa</button>
+                        <button class="difficulty-option" type="button" data-difficulty="hard">Khó</button>
+                    </div>
+                    <p class="difficulty-note" id="difficultyNote">Chai lớn, đứng yên · 75 giây</p>
+                </div>
+
+                <div class="record-row">
+                    <span class="record-icon" aria-hidden="true">↗</span>
+                    <span><span class="record-label">KỶ LỤC CÁ NHÂN</span><strong id="bestScoreSide">0000</strong></span>
+                    <button class="text-button" id="bestButton" type="button">CHI TIẾT <span>↗</span></button>
+                </div>
+
+                <div class="rail-footer"><span>© CÂU LẠC BỘ BẮN TẬP</span><span>SỐ 001</span></div>
+            </aside>
+
+            <section class="range-frame" aria-label="Trường bắn">
+                <div class="game-hud">
+                    <div class="hud-score">
+                        <span class="hud-label">ĐIỂM</span>
+                        <strong id="scoreValue">0000</strong>
+                        <span class="combo-chip" id="comboValue">LIÊN TIẾP ×1</span>
+                    </div>
+                    <div class="hud-time" aria-label="Thời gian còn lại">
+                        <div class="time-topline"><span class="hud-label">THỜI GIAN</span><strong id="timeValue">75</strong></div>
+                        <div class="time-track"><span id="timeBar"></span></div>
+                    </div>
+                    <div class="hud-ammo">
+                        <span class="hud-label">ĐẠN</span>
+                        <strong id="ammoValue">10 <small>/ 10</small></strong>
+                        <span class="ammo-pips" id="ammoPips" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <canvas id="rangeCanvas" aria-label="Ngắm mục tiêu và nhấp chuột để bắn"></canvas>
+                <div class="crosshair" id="crosshair" aria-hidden="true"><span></span><i></i></div>
+                <div class="range-stamp"><span>GHI CHÚ TRƯỜNG BẮN</span><strong>KHU VỰC<br>07</strong><span>VĨ ĐỘ 41° 24′</span></div>
+                <div class="wind-readout"><span class="wind-arrow">↗</span><span>GIÓ<br><b>2.4</b> KM/GIỜ</span></div>
+                <div class="shot-feedback" id="shotFeedback" aria-live="polite"></div>
+
+                <div class="overlay" id="menuOverlay">
+                    <div class="menu-panel">
+                        <span class="eyebrow">TRƯỜNG BẮN · TỪ NĂM 1984</span>
+                        <h2>BẮN CHAI<br><em>3D</em></h2>
+                        <p>Ngắm thật chuẩn. Giữ vững tay.</p>
+                        <button class="primary-button" id="startButton" type="button"><span>BẮT ĐẦU</span><span class="button-arrow">↗</span></button>
+                        <div class="menu-links">
+                            <button type="button" data-dialog="how">CÁCH CHƠI <span>↗</span></button>
+                            <button type="button" data-dialog="settings">CÀI ĐẶT <span>↗</span></button>
+                            <button type="button" data-dialog="best">KỶ LỤC <span>↗</span></button>
+                        </div>
+                    </div>
+                    <div class="menu-caption">ĐỒI CANTERBURY<br>CÂU LẠC BỘ BẮN TẬP</div>
+                </div>
+
+                <div class="overlay hidden" id="pauseOverlay">
+                    <div class="dialog-panel compact-panel">
+                        <span class="eyebrow">TẠM DỪNG</span>
+                        <h2>Nghỉ một<br><em>chút nhé.</em></h2>
+                        <p>Trận đấu đang tạm dừng.</p>
+                        <button class="primary-button" id="resumeButton" type="button"><span>CHƠI TIẾP</span><span class="button-arrow">↗</span></button>
+                        <button class="secondary-button" id="pauseRestartButton" type="button">CHƠI LẠI TỪ ĐẦU</button>
+                    </div>
+                </div>
+
+                <div class="overlay hidden" id="gameOverOverlay">
+                    <div class="dialog-panel result-panel">
+                        <span class="eyebrow">KẾT THÚC LƯỢT CHƠI</span>
+                        <h2>Bắn rất<br><em>cừ!</em></h2>
+                        <div class="result-score"><span>TỔNG ĐIỂM</span><strong id="finalScore">0000</strong></div>
+                        <div class="result-stats"><div><span>ĐỘ CHÍNH XÁC</span><strong id="finalAccuracy">0%</strong></div><div><span>CHUỖI DÀI NHẤT</span><strong id="finalCombo">×1</strong></div></div>
+                        <button class="primary-button" id="playAgainButton" type="button"><span>CHƠI LẠI</span><span class="button-arrow">↗</span></button>
+                    </div>
+                </div>
+
+                <div class="overlay hidden dialog-overlay" id="dialogOverlay">
+                    <section class="dialog-panel info-panel" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+                        <button class="close-button" id="closeDialog" type="button" aria-label="Đóng hộp thoại">×</button>
+                        <span class="eyebrow" id="dialogEyebrow">HƯỚNG DẪN</span>
+                        <h2 id="dialogTitle">Cách<br><em>chơi.</em></h2>
+                        <div class="dialog-content" id="dialogContent"></div>
+                    </section>
+                </div>
+
+                <div class="bottom-controls">
+                    <div class="control-hint"><span class="keycap">CHUỘT</span> DI CHUYỂN ĐỂ NGẮM <span class="hint-divider">·</span> NHẤP ĐỂ BẮN</div>
+                    <div class="action-controls">
+                        <button class="reload-button" id="reloadButton" type="button" disabled><span class="reload-symbol">↻</span> NẠP ĐẠN <kbd>R</kbd></button>
+                        <button class="pause-button" id="pauseButton" type="button" aria-label="Tạm dừng trò chơi" title="Tạm dừng trò chơi"><span class="pause-symbol">Ⅱ</span><kbd>ESC</kbd></button>
+                        <button class="fire-button" id="fireButton" type="button"><span class="fire-icon">✳</span> BẮN</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <footer class="page-footer"><span>BÌNH TĨNH NGẮM. CHÍNH XÁC RA TAY.</span><span>SẴN SÀNG CHO CUỘC CHƠI NGOÀI TRỜI <b>✳</b></span></footer>
+    </main>
+</body>
+</html>
