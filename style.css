@@ -25,7 +25,7 @@ body {
 
 button { color: inherit; font: inherit; }
 button:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
-.app-shell { width: min(1440px, 100%); min-height: 100vh; margin: 0 auto; padding: 0 5.2%; display: flex; flex-direction: column; }
+.app-shell { width: min(1440px, 100%); min-height: 100vh; margin: 0 auto; padding: 0 4.5%; display: flex; flex-direction: column; }
 .topbar { height: 74px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); flex: 0 0 auto; }
 .wordmark { display: inline-flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
 .brand-mark { width: 27px; height: 27px; display: grid; place-items: center; color: #f4f1e8; background: var(--ink); font-family: var(--display); font-size: 16px; font-style: italic; }
@@ -39,7 +39,7 @@ button:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
 .sound-off { display: none; }
 .sound-muted .sound-on { display: none; }
 .sound-muted .sound-off { display: block; }
-.game-layout { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: clamp(26px, 5vw, 76px); align-items: center; padding: 34px 0 28px; }
+.game-layout { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: clamp(22px, 4.5vw, 64px); align-items: center; padding: 34px 0 28px; }
 .side-rail { min-height: 540px; display: flex; flex-direction: column; padding: 9px 0 0; animation: rise-in .65s both; }
 .rail-heading { display: flex; justify-content: space-between; color: #78837b; font-size: 8px; }
 .rail-number { color: #a1aaa1; }
@@ -123,8 +123,11 @@ button:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
 .best-grid span { color: #6d7b71; }
 .best-grid strong { color: #30443a; font-weight: 500; }
 .compact-panel { width: min(350px, 100%); }
-.compact-panel h2 { font-size: 52px; }
-.compact-panel .primary-button { margin-top: 22px; }
+.compact-panel { padding: 24px; }
+.compact-panel h2 { margin: 9px 0; font-size: 42px; }
+.compact-panel > p { margin: 8px 0 14px; }
+.compact-panel .primary-button { margin-top: 12px; }
+.compact-panel .secondary-button { margin-top: 7px; padding: 9px; }
 .secondary-button { width: min(260px, 100%); margin-top: 10px; padding: 12px; border: 1px solid var(--line); background: transparent; color: #647168; font: 9px var(--mono); cursor: pointer; }
 .result-panel { width: min(380px, 100%); }
 .result-panel h2 { font-size: 48px; }
@@ -169,26 +172,26 @@ button:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
 }
 @media (max-width: 650px) {
     body { min-height: 100svh; }
-    .app-shell { min-height: 100svh; padding: 0 17px; }
-    .topbar { height: 58px; }
+    .app-shell { min-height: 100svh; padding: 0 14px; }
+    .topbar { height: 62px; }
     .session-label { font-size: 7px; }
     .topbar-right { gap: 10px; }
     .game-layout { display: flex; flex-direction: column; align-items: stretch; gap: 14px; padding: 18px 0 15px; }
     .side-rail { min-height: 0; padding: 0; display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 10px; }
     .rail-heading { grid-column: 1 / -1; margin-bottom: 3px; font-size: 7px; }
-    .side-rail h1 { margin: 5px 0 0; font-size: 28px; line-height: 1.1; }
+    .side-rail h1 { margin: 5px 0 0; font-size: 30px; line-height: 1.12; }
     .intro-copy, .rail-footer { display: none; }
     .difficulty-block { display: block; grid-column: 1 / -1; margin: 8px 0 0; }
     .difficulty-block .section-label, .difficulty-note { display: none; }
     .difficulty-control { width: 190px; max-width: 100%; margin-top: 0; }
-    .difficulty-option { height: 27px; }
+    .difficulty-option { height: 31px; }
     .record-row { width: 130px; margin: 0; padding: 7px 0; gap: 7px; border-top: 0; border-bottom: 0; }
     .record-icon { width: 23px; height: 23px; font-size: 12px; }
     .record-label { font-size: 6px; }
     .record-row strong { font-size: 10px; }
     .record-row .text-button { display: none; }
     .range-frame { flex: 1 1 auto; min-height: 330px; max-height: 66svh; aspect-ratio: auto; }
-    .game-hud { height: 55px; padding: 9px 10px; gap: 10px; grid-template-columns: 1fr 1.15fr 1fr; }
+    .game-hud { height: 60px; padding: 9px 10px; gap: 10px; grid-template-columns: 1fr 1.15fr 1fr; }
     .hud-label { font-size: 7px; }
     .hud-score strong, .hud-ammo strong { font-size: 13px; }
     .hud-time { min-width: 72px; }
@@ -198,25 +201,29 @@ button:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
     .menu-panel h2 { font-size: clamp(37px, 11vw, 54px); }
     .menu-panel > p { font-size: 10px; }
     .menu-caption { font-size: 6px; }
-    .bottom-controls { height: 58px; padding: 0 10px; }
+    .bottom-controls { height: 64px; padding: 0 10px; }
     .control-hint { display: none; }
     .action-controls { width: 100%; justify-content: space-between; gap: 8px; }
-    .reload-button { height: 39px; min-width: 97px; justify-content: center; font-size: 8px; }
-    .pause-button { width: 40px; height: 39px; }
-    .fire-button { height: 42px; min-width: 108px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; color: #f5f0df; background: #bb5c3b; font: 10px var(--mono); letter-spacing: 1px; cursor: pointer; touch-action: manipulation; }
+    .reload-button { height: 46px; min-width: 108px; justify-content: center; font-size: 9px; }
+    .pause-button { width: 46px; height: 46px; }
+    .fire-button { height: 48px; min-width: 118px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; color: #f5f0df; background: #bb5c3b; font: 11px var(--mono); letter-spacing: 1px; cursor: pointer; touch-action: manipulation; }
     .fire-button:active { background: #99472e; transform: scale(.98); }
     .fire-icon { font-size: 14px; }
-    .range-stamp { left: 10px; bottom: 74px; font-size: 6px; }
-    .wind-readout { right: 10px; bottom: 74px; font-size: 6px; }
+    .range-stamp { left: 10px; bottom: 79px; font-size: 7px; }
+    .wind-readout { right: 10px; bottom: 79px; font-size: 7px; }
     .page-footer { height: 32px; font-size: 6px; }
 }
 @media (max-width: 380px) {
-    .app-shell { padding: 0 12px; }
+    .app-shell { padding: 0 10px; }
     .wordmark { font-size: 10px; }
     .range-frame { min-height: 310px; }
     .game-hud { padding: 8px; gap: 6px; }
     .hud-score, .hud-ammo { column-gap: 5px; }
     .ammo-pips i { width: 4px; }
+    .action-controls { gap: 6px; }
+    .reload-button { min-width: 98px; }
+    .pause-button { width: 42px; }
+    .fire-button { min-width: 110px; }
 }
 
 /* Clearer labels without changing the overall layout. */
